@@ -1,0 +1,22 @@
+name: pull-requests
+run-name: ${{ github.event.pull_request.title }}
+on:
+  pull_request:
+    types: [opened, re-opened, synchronize, review_requested, ready_for_review, rebased]
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.20.3
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Build
+        run: |
+          echo "Building the project..."
+          go build -v ./...
