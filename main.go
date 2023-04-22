@@ -6,12 +6,13 @@ import (
 	"ProjectIdeas/monolith/internal/db"
 	"ProjectIdeas/monolith/internal/db/sqlite"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 )
 
-const port = "8080" // 8080 is the port number for the monolith service
+const port = "80" // 8080 is the port number for the monolith service
 
 func main() {
 	ctx := context.Background()
@@ -33,9 +34,9 @@ func main() {
 		log.Println("error creating new api:", err)
 	}
 
-	log.Printf("Starting monolith service on port: %s", port)
+	log.Printf("Starting rest api on port: %s", port)
 
-	if err := http.ListenAndServe("localhost:8080", httpserver.NewRouter(ctx, httpserver.RouterOptions{Api: a})); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf("localhost:%s", port), httpserver.NewRouter(ctx, httpserver.RouterOptions{Api: a})); err != nil {
 		log.Fatalf("fatal crash %s", err)
 	}
 }
