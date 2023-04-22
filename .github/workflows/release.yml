@@ -15,6 +15,6 @@ jobs:
         uses: rymndhng/release-on-push-action@master
         with:
           bump_version_scheme: minor
-
-
-
+    permissions:
+      contents: write
+      pull-requests: read
