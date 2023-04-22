@@ -16,8 +16,6 @@ const port = "8080" // 8080 is the port number for the monolith service
 func main() {
 	ctx := context.Background()
 
-	// TODO:
-	// setup the database
 	var dber db.DBer
 	for {
 		dberr, err := sqlite.New(ctx)
@@ -32,7 +30,7 @@ func main() {
 
 	a, err := api.New(api.ApiOptions{DB: dber})
 	if err != nil {
-		log.Println("error creating a new api:", err)
+		log.Println("error creating new api:", err)
 	}
 
 	log.Printf("Starting monolith service on port: %s", port)
@@ -40,13 +38,4 @@ func main() {
 	if err := http.ListenAndServe("localhost:8080", httpserver.NewRouter(ctx, httpserver.RouterOptions{Api: a})); err != nil {
 		log.Fatalf("fatal crash %s", err)
 	}
-
-	// setup the router
-	// setup the handlers
-	// setup the middleware
-	// setup the logger
-	// setup the config
-	// start the service
-
-	log.Println("Exiting...")
 }
