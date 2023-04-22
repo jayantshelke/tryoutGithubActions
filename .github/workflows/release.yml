@@ -14,7 +14,8 @@ jobs:
       - id: release
         uses: rymndhng/release-on-push-action@master
         with:
-          bump_version_scheme: minor
+          bump_version_scheme: major
+          tag_prefix: ""
     permissions:
       contents: write
       pull-requests: read
