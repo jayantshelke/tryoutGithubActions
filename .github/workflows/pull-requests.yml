@@ -14,9 +14,41 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.20.3
-      - name: Install dependencies
-        run: go mod tidy
       - name: Build
         run: |
-          echo "Building the project..."
-          go build -v ./...
+          ./build.sh
+      - name: Upload Artifact for download from Github Build Summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: buildartifacts
+          path: ./buildartifacts
+          retention-days: 20
+
+      - name: Upload buildartifacts to S3
+        uses: medlypharmacy/s3-artifacts-action@master
+        id: S3
+        with:
+          aws_access_key_id: ${{ secrets.S3_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          aws_s3_bucket_name: ${{ secrets.S3_BUCKET_NAME }}
+          source_path: './buildartifacts'
+          destination_path: "/${{ github.event.pull_request.number }}/"
+          exclude_repo_from_destination_path: true
+          resource_type: "DIRECTORY"
+
+#      - name: Upload S3
+#        uses: shallwefootball/s3-upload-action@master
+#        id: S3
+#        with:
+#          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+#          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+#          aws_bucket: ${{ secrets.AWS_BUCKET }}
+#          source_dir: './buildartifacts'
+#          destination_dir: "/${{ github.event.pull_request.number }}/"
+#      - name: Show URL
+#        run: echo '${{ steps.S3.outputs.file-url }}' # use this output
+      - name: Link to Artifact Download
+        run: |
+          echo https://${{secrets.S3_BUCKET_NAME}}.s3.amazonaws.com/${{steps.S3.outputs.object_key}}/
+          echo ${{steps.S3.outputs.object_key}}
+
